@@ -25,7 +25,6 @@ public class PMScheduledTask implements Runnable {
     private final int CONNECTION_TIMEOUT = 1000 * 60 * 10; // 10 mins
     private Date myAgentIdleDate;
     private volatile boolean myAgentIdleState;
-    private Date myAgentIdleDateChangedPool = new Date();
 
     PMScheduledTask(@NotNull BuildAgent myBuildAgent, PMConfiguration myPMConfiguration) {
         this.myBuildAgent = myBuildAgent;
@@ -54,20 +53,12 @@ public class PMScheduledTask implements Runnable {
 
     @Override
     public void run() {
-        if (myAgentIdleDateChangedPool.equals(myAgentIdleDate)) {
-            Log.info("We've already changed agent pool after it became idle at: " +
-                    myAgentIdleDateChangedPool.toString());
-            return;
-        }
         if (myAgentIdleState) {
             Log.info("Trying to change agent pool (count: " + ++count + ")");
             long timeDiff = new Date().getTime() - myAgentIdleDate.getTime();
             if (timeDiff > myPMConfiguration.getMyConfigIdleTimeout() * 60 * 1000) {
                 Log.debug("Sending changeAgentPool command to server");
                 boolean result = this.changeAgentPool();
-                if (result) {
-                    myAgentIdleDateChangedPool = myAgentIdleDate;
-                }
                 Log.info("Result for changeAgentPool command to server: " + result);
             } else {
                 Log.info("Agent is not idle for enough time (timeDiff: " + timeDiff +

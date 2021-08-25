@@ -4,31 +4,31 @@
   <parent>
     <artifactId>poolmovement</artifactId>
     <groupId>com.teamcity.poolmovement</groupId>
-    <version>1.0</version>
+    <version>1.1</version>
   </parent>
   <artifactId>build</artifactId>
   <packaging>pom</packaging>
   <properties>
       <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-      <teamcity.poolmovement.plugin.version>1.0</teamcity.poolmovement.plugin.version>
-      <teamcity.poolmovement.plugin.vendorName>Viavi Solutions</teamcity.poolmovement.plugin.vendorName>
+      <teamcity.poolmovement.plugin.version>1.1</teamcity.poolmovement.plugin.version>
+      <teamcity.poolmovement.plugin.vendorName>Nitin Aran</teamcity.poolmovement.plugin.vendorName>
       <teamcity.poolmovement.plugin.vendorUrl>https://www.viavisolutions.com/en-uk</teamcity.poolmovement.plugin.vendorUrl>
   </properties>
   <dependencies>
       <dependency>
            <groupId>com.teamcity.poolmovement</groupId>
            <artifactId>poolmovement-agent</artifactId>
-           <version>1.0</version>
+           <version>1.1</version>
       </dependency>
       <dependency>
            <groupId>com.teamcity.poolmovement</groupId>
            <artifactId>poolmovement-common</artifactId>
-           <version>1.0</version>
+           <version>1.1</version>
       </dependency>
       <dependency>
            <groupId>com.teamcity.poolmovement</groupId>
            <artifactId>poolmovement-server</artifactId>
-           <version>1.0</version>
+           <version>1.1</version>
       </dependency>
   </dependencies>
   <build>

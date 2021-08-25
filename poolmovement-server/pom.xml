@@ -4,7 +4,7 @@
   <parent>
     <artifactId>poolmovement</artifactId>
     <groupId>com.teamcity.poolmovement</groupId>
-    <version>1.0</version>
+    <version>1.1</version>
   </parent>
   <artifactId>poolmovement-server</artifactId>
   <packaging>jar</packaging>
@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.teamcity.poolmovement</groupId>
       <artifactId>poolmovement-common</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
       <scope>compile</scope>
     </dependency>
 
