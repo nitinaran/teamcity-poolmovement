@@ -39,6 +39,8 @@ public class XmlRpcHandlerImpl implements XmlRpcHandler {
     @NotNull
     private final AgentTypeFinder myAgentTypeFinder;
     @NotNull
+    private final BuildQueueStateManager myBuildQueueStateManager;
+    @NotNull
     private XmlRpcHandlerManager myXmlRpcHandlerManager;
 
     private static final Logger Log = Logger.getInstance(XmlRpcHandlerImpl.class.getName());
@@ -56,7 +58,8 @@ public class XmlRpcHandlerImpl implements XmlRpcHandler {
                               @NotNull SuitableConfigurationsProvider suitableConfigurationsProvider,
                               @NotNull CurrentProblemsManager currentProblemsManager,
                               @NotNull TestName2Index testName2Index,
-                              @NotNull AgentTypeFinder agentTypeFinder) {
+                              @NotNull AgentTypeFinder agentTypeFinder,
+                              @NotNull BuildQueueStateManager buildQueueStateManager) {
         this.myXmlRpcHandlerManager = myXmlRpcHandlerManager;
         this.myServer = buildServerEx;
         this.myXstreamHolder = serverModelXStreamHolder;
@@ -71,14 +74,18 @@ public class XmlRpcHandlerImpl implements XmlRpcHandler {
         this.myCurrentProblemsManager = currentProblemsManager;
         this.myTestName2Index = testName2Index;
         this.myAgentTypeFinder = agentTypeFinder;
+        this.myBuildQueueStateManager = buildQueueStateManager;
         addHandler("PoolMovementXmlRpc", this);
         Log.info(XmlRpcHandlerImpl.class.getName() + " initialized");
     }
 
     @Override
     public boolean changeAgentPoolTo(int agentId, @NotNull String newPoolName) {
-        // String agentName = "LTN3-EUD-D00167";
-        // String newPoolName = "LTE_RAV_MK4";
+        if (!myBuildQueueStateManager.readQueueState().isPoolMovementEnabled()) {
+            Log.info("Pool movement is currently disabled either because the queue is disabled or it is not enough time since it was enabled");
+            return false;
+        }
+
         Log.info("changeAgentPoolTo agentId: " + agentId + " newPoolName: " + newPoolName);
         SBuildAgent agent = myBuildAgentManager.findAgentById(agentId, true);
         if (agent == null) {
