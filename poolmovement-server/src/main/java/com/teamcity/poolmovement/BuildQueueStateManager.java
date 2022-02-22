@@ -55,7 +55,7 @@ public class BuildQueueStateManager {
     }
 
     @NotNull
-    public BuildQueueState gi readQueueState() {
+    public BuildQueueState readQueueState() {
         return myStateRef.get();
     }
 
