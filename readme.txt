@@ -1,13 +1,6 @@
 
- TeamCity plugin
-
- This is an empty project to develop TeamCity plugin.
-
- 1. Implement
- This project contains 3 modules: '<artifactId>-server', '<artifactId>-agent' and '<artifactId>-common'. They will contain code for server and agent parts of your plugin and a common part, available for both (agent and server). When implementing components for server and agent parts, do not forget to update spring context files under 'main/resources/META-INF'. Otherwise your compoment may be not loaded. See TeamCity documentation for details on plugin development.
-
- 2. Build
- Issue 'mvn package' command from the root project to build your plugin. Resulting package <artifactId>.zip will be placed in 'target' directory. 
+ TeamCity plugin to do pool movement when the agent is idle for a configurable time
  
- 3. Install
- To install the plugin, put zip archive to 'plugins' dir under TeamCity data directory. If you only changed agent-side code of your plugin, the upgrade will be perfomed 'on the fly' (agents will upgrade when idle). If common or server-side code has changed, restart the server.
+ This plugin will move the agent when the agent is in a different pool than the default one if it is idle for more then a configurable time.
+ This feature can be enabled per agent via the agent configuration
+ Additionally, if the build queue is paused the pool movement does not happen during that time. Once the queue is enabled again, it waits for 10 mins before actually starting to do any type of pool movement
