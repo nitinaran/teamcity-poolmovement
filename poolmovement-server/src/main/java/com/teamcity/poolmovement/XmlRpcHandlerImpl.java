@@ -88,12 +88,20 @@ public class XmlRpcHandlerImpl implements XmlRpcHandler {
 
         Log.info("changeAgentPoolTo agentId: " + agentId + " newPoolName: " + newPoolName);
         SBuildAgent agent = myBuildAgentManager.findAgentById(agentId, true);
+
         if (agent == null) {
             Log.error("Unable to find agent with id: " + agentId);
             return false;
         }
+
         String agentName = agent.getName();
         Log.debug("Found agent with id: " + agentId + " " + agentName);
+
+        if (!(agent.isAuthorized() && agent.isEnabled())) {
+            Log.info("Agent " + agentName + " is either unauthorized or disabled, so pool movement is disabled");
+            return false;
+        }
+
         int agentPoolId;
         try {
             agentPoolId = agent.getAgentPoolId();
@@ -121,6 +129,7 @@ public class XmlRpcHandlerImpl implements XmlRpcHandler {
             Log.info("Already in the right pool, so nothing to do");
             return true;
         }
+
         try {
             Log.info("Moving the agent: " + agentName + " to the new pool: " + newPoolName);
             myAgentPoolManager.moveAgentToPool(newPoolId, (BuildAgentEx) agent);

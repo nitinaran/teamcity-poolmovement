@@ -15,14 +15,14 @@ import java.util.Date;
 public class PMScheduledTask implements Runnable {
     private static final Logger Log = Logger.getInstance("jetbrains.buildServer." + PMScheduledTask.class.getName());
 
-    private static int count = 0;
-    private BuildAgent myBuildAgent;
-    private PMConfiguration myPMConfiguration;
+    private final BuildAgent myBuildAgent;
+    private final PMConfiguration myPMConfiguration;
+    private static final int DEFAULT_SKIP_CHECK_COUNT = 2;  //corresponds to 1 hour for default value
+    private static int mySkipCheckCount = 0;
     // private final String myUser = "teamcitymaster";
     // private final String myPassword = "";
     private RemoteServerFacade myServerFacade;
     private SessionXmlRpcTarget mySession;
-    private final int CONNECTION_TIMEOUT = 1000 * 60 * 10; // 10 mins
     private Date myAgentIdleDate;
     private volatile boolean myAgentIdleState;
 
@@ -32,6 +32,8 @@ public class PMScheduledTask implements Runnable {
         String myServerUrl = myBuildAgent.getConfiguration().getServerUrl();
         Log.debug("Server URL: " + myServerUrl);
         try {
+            // 10 mins
+            int CONNECTION_TIMEOUT = 1000 * 60 * 10;
             mySession = new SessionXmlRpcTargetImpl(myServerUrl, getUserAgent(), CONNECTION_TIMEOUT);
             // mySession.setCredentials(myUser, myPassword);
             // mySession.authenticate(new XmlRpcTarget.Cancelable() {
@@ -54,15 +56,24 @@ public class PMScheduledTask implements Runnable {
     @Override
     public void run() {
         if (myAgentIdleState) {
-            Log.info("Trying to change agent pool (count: " + ++count + ")");
+            if (mySkipCheckCount > 0) {
+                Log.info("Ignoring the agent change as skip count is " + mySkipCheckCount);
+                mySkipCheckCount--;
+                return;
+            }
+            Log.info("Trying to change agent pool");
             long timeDiff = new Date().getTime() - myAgentIdleDate.getTime();
-            if (timeDiff > myPMConfiguration.getMyConfigIdleTimeout() * 60 * 1000) {
+            boolean result = false;
+            if (timeDiff > (long) myPMConfiguration.getMyConfigIdleTimeout() * 60 * 1000) {
                 Log.debug("Sending changeAgentPool command to server");
-                boolean result = this.changeAgentPool();
+                result = this.changeAgentPool();
                 Log.info("Result for changeAgentPool command to server: " + result);
             } else {
                 Log.info("Agent is not idle for enough time (timeDiff: " + timeDiff +
                         ", idleTimeout: " + myPMConfiguration.getMyConfigIdleTimeout() * 60 * 1000 + ")");
+            }
+            if (result) {
+                mySkipCheckCount = DEFAULT_SKIP_CHECK_COUNT;
             }
         } else {
             Log.info("Agent is not currently idle (myAgentIdleState: " + myAgentIdleState + ")");
