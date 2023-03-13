@@ -10,7 +10,7 @@
   <packaging>pom</packaging>
   <properties>
       <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-      <teamcity.poolmovement.plugin.version>1.1</teamcity.poolmovement.plugin.version>
+      <teamcity.poolmovement.plugin.version>1.2</teamcity.poolmovement.plugin.version>
       <teamcity.poolmovement.plugin.vendorName>Nitin Aran</teamcity.poolmovement.plugin.vendorName>
       <teamcity.poolmovement.plugin.vendorUrl>https://www.viavisolutions.com/en-uk</teamcity.poolmovement.plugin.vendorUrl>
   </properties>
